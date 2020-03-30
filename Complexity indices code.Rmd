@@ -1,0 +1,184 @@
+---
+title: "Structural Complexity Indices"
+author: "Mai Lazarus"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+```
+
+Install needed libraries if not already installed:
+```{r Required libraries}
+
+is_inst <- function(pkg) {
+  nzchar(system.file(package = pkg))
+}
+
+#Install the 'packman' library to easilly install additional libraries
+if (!is_inst("pacman")) {install.packages("pacman")}
+
+library("pacman")
+
+p_load(dplyr, tidyverse, knitr ,tidyr, httr, reshape2, stringr, data.table,
+       FD, corrplot, fractaldim, features, transport, pracma)
+
+```
+
+This script produces all structural complexity indices used in our study:
+
+1. Structural diversity indices
+
+2. Sky view factor indices
+
+3. Common indices
+
+4. Neighbors distance indices
+
+5. Topographic position indices
+
+6. FreeSpace index
+
+7. EarthMovers index
+
+
+For each of the groups, an Rmd file is sourced, where all functions are available. A short description of the essence and calculation of each of the aforementioned indices groups is also in the Rmd file. For full description please refer to the manuscript. 
+
+##Data
+
+The necessary data for all functions should include 3 variables:
+
+  * Depth values along the bottom profile
+  * Their order, i.e. an acending sequence of numbers corresponding to the measurements
+  * An identification variable distinct for each bottom profile
+
+For functions that require more data explanations are provided.
+
+Step 1: import data 
+Here is an example data, including 9000 depth measurements from 50 'transects' 
+
+```{r Load data}
+data = read.csv("simulation_data.csv")
+head(data)
+```
+
+Step 2: calculate structural complexity indices
+
+#1. Structural diversity indices:#
+
+```{r Load Structural diversity functions, echo=FALSE}
+#Load functions
+knit('structural diversity functions.Rmd')
+```
+
+Calculate structural diversity (FD) indices:
+Here, 3 more arguments other than 'data' are required:
+1. transect_length - the length of the transect, in m.
+2. search distance - the distance in meters in which local extrama are searched from each focal measurement. 
+3. traits - a vector with the names of elements traits chosen for the calculation of structural diversity.   
+
+Three types of plots are created, presenting the bottom profile:
+For each transect, side by side:
+1. Local extrema of all levels. 
+2. Structural elements within the profile, distinguished by colors. 
+
+3. A single plot presenting the correlations among structural elements traits. 
+
+Please refer to 'Structural diversity functions.Rmd' for more details.
+
+```{r Calculate structural diversity, out.width= '50%',results='hide'}
+FD_indices = indices_calc_fun(data, 
+                              transect_length = 25, 
+                              search_distance = 0.75, 
+                              traits = c("rugosity","vr","max_slope"))
+```
+
+
+#2. Sky view factor indices#
+```{r Load SkyView functions, echo=FALSE}
+#Load functions
+knit('Sky view factor functions.Rmd')
+```
+
+Calculate Sky view factor (SkyView) indices:
+Here, 3 additional arguments are required:
+1. 'radius_length' - the length of the arch's radius. 
+2. 'threshold' - the amount of angles to extract (%) for the calculation, to avoid the overriding effects of flat areas with low angle values. 
+3. 'edges_to_remove' - the distance to remove from each of the transects' ends, as the profile is unknown beyonf the transects' boundaries. 
+For full description, refer to 'Sky view factor.Rmd' file and the manuscript. 
+
+```{r Calculate SkyView}
+SkyViewFactor = apply_svf_fun(data, radius_length = 2.5, threshold = .3, transect_length = 25, edges_to_remove = 2.5)
+```
+
+
+#3. Common indices
+```{r Load common indices functions, echo=FALSE}
+#Load functions
+knit('common_indices_functions.Rmd')
+```
+
+Calculate common indices indices:
+```{r Calculate common indices}
+common_indices = common_fun(data) 
+```
+
+#4. Neighbors distance indices
+
+```{r Load Neighbors distance functions, echo=FALSE}
+#Load functions
+knit('neighbors_functions.Rmd')
+```
+
+Calculate Neighbors distance indices indices:
+```{r Calculate Neighbors distance indices}
+neighbors_indices = neighbors_indices_fun(data) 
+```
+
+
+#5. Topographic position indices - Max concavity/convexity
+
+```{r Load topographic position indices functions, echo = FALSE}
+#Load functions
+knit('TPI functions.Rmd')
+```
+
+Calculate Max concavity/convexity indices indices:
+```{r Calculate topographical indices}
+Max_concave_convex_indices = Max_concave_convex_fun(data) 
+```
+
+#6. FreeSpace index
+
+```{r Load FreeSpace functions, echo=FALSE}
+#Load functions
+knit('FreeSpace functions.Rmd')
+```
+
+Calculate FreeSpace index:
+```{r Calculate FreeSpace index}
+FreeSpace_index = FreeSpace_fun(data) 
+```
+
+
+#7. EarthMovers index
+
+```{r Load EarthMovers functions, echo=FALSE}
+#Load functions
+knit('EarthMovers functions.Rmd')
+```
+
+Calculate EarthMovers indices:
+```{r Calculate EarthMovers functions}
+EarthMovers_data = wass_fun(data) 
+```
+
+Join all indices data:
+```{r Join all indices}
+complexity_indices = Reduce(function(x, y) merge(x, y, by = "ID", all = TRUE), list(FD_indices, SkyViewFactor, common_indices, neighbors_indices, Max_concave_convex_indices, FreeSpace_index, EarthMovers_data))
+```
+
+

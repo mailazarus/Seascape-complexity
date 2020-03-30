@@ -1,0 +1,33 @@
+---
+title: "Topographic Position indices - MaxConvexity and MaxConcavity"
+author: "Mai Lazarus"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+Topographic position indices are based on the index from Amatulli et.al. (2018), which was implemented on raster data  of DEM's - Digital eleveation models. In it's original form, it refered to a focal cell and its 8 surrounding cells. Here it is modified to 2 dimensional data, with one focal point (depth measurement) and 2 neighboring points.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Libraries,echo=T,warning=F,message=F}
+library(dplyr)
+```
+
+**Topographic position indices: MaxConcavity & MaxConvexity indices** represents the difference between the depth of point X and the mean depth of points X-1 and X+1. As TPI increase, changes of slopes between measurements increase. Values close to 0 indicate a straight line, that is, the mean depth of the two "neighbor" points is similar to the depth of the central point. Values closer to 1 or -1 indicate a change of slope between point x-1 to x and point x+1 to x. Positive values represent a series of 3 points that creates a convex element (quantified by the **MaxConvexity** index), while negative values represent a series of 3 points that creates a concave element (quantified by the **MaxConcavity index**. 
+
+```{r Tpi,warning=F,message=F}
+Max_concave_convex_fun = function(data){ 
+  Max_concave_convex = data %>%
+    group_by(ID) %>%
+    select(ID, depth) %>%
+      #summing each pair of points that form the two ends of a series of 3 points. Removing NAs formed at the end of the vector (due to the fact that the last 2 points in the profile have no 2 points to pair with). Dividing by 2 to get the mean depth per pair
+    mutate(tpi_start = abs(depth + lead(lead(depth))))%>%
+    summarize(Max_convexity = max(depth[2:(length(depth)-1)] - (na.omit(tpi_start)/2)),
+              Max_concavity =  min(depth[2:(length(depth)-1)] - (na.omit(tpi_start)/2)))
+  
+  return(Max_concave_convex)
+}
+```
