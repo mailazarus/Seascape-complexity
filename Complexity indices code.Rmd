@@ -76,8 +76,11 @@ knit('structural diversity functions.Rmd')
 
 Calculate structural diversity (FD) indices:
 Here, 3 more arguments other than 'data' are required:
+
 1. transect_length - the length of the transect, in m.
+
 2. search distance - the distance in meters in which local extrama are searched from each focal measurement. 
+
 3. traits - a vector with the names of elements traits chosen for the calculation of structural diversity.   
 
 Three types of plots are created, presenting the bottom profile:
@@ -89,9 +92,11 @@ For each transect, side by side:
 
 3. A single plot presenting the correlations among structural elements traits. 
 
+*Here, plots 1,2 are shown only for bottom profile number 1. To show the results for all bottom profiles, change the chunks' settings. 
+
 Please refer to 'Structural diversity functions.Rmd' for more details.
 
-```{r Calculate structural diversity, out.width= '50%', results='hide'}
+```{r Calculate structural diversity, out.width= '50%', results='hide', fig.keep=c(1:2,21)}
 FD_indices = indices_calc_fun(data, 
                               transect_length = 25, 
                               search_distance = 0.75, 
