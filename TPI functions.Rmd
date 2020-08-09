@@ -24,7 +24,8 @@ Max_concave_convex_fun = function(data){
     group_by(ID) %>%
     select(ID, depth) %>%
       #summing each pair of points that form the two ends of a series of 3 points. Removing NAs formed at the end of the vector (due to the fact that the last 2 points in the profile have no 2 points to pair with). Dividing by 2 to get the mean depth per pair
-    mutate(tpi_start = abs(depth + lead(lead(depth))))%>%
+    mutate(depth = -1 * depth,
+      tpi_start = abs(depth + lead(lead(depth))))%>%
     summarize(Max_convexity = max(depth[2:(length(depth)-1)] - (na.omit(tpi_start)/2)),
               Max_concavity =  min(depth[2:(length(depth)-1)] - (na.omit(tpi_start)/2)))
   
