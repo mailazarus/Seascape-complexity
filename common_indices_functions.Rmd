@@ -52,9 +52,8 @@ The fractal dimension of a physical element is a non-integer dimension that desc
 
 ```{r Fractal dimension}
 fractals_fun = function(depths)  {
-  points = c(1:length(depths))
-  data = as.matrix(cbind(points,depths))
-  fd = fd.estim.madogram(data,plot.loglog=F, plot.allpoints=F, nlags="auto")
+  depth = -1 * depths$depth
+  fd = fd.estim.madogram(depth,plot.loglog=F, plot.allpoints=F, nlags="auto")
   fractal_d<-as.numeric(fd['fd'])
   return(fractal_d)
 }
