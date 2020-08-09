@@ -52,8 +52,8 @@ The fractal dimension of a physical element is a non-integer dimension that desc
 
 ```{r Fractal dimension}
 fractals_fun = function(depths)  {
-  depth = -1 * depths$depth
-  fd = fd.estim.madogram(depth,plot.loglog=F, plot.allpoints=F, nlags="auto")
+  data = -1 * depths
+  fd = fd.estim.madogram(data, plot.loglog=F, plot.allpoints=F, nlags="auto")
   fractal_d<-as.numeric(fd['fd'])
   return(fractal_d)
 }
@@ -112,4 +112,6 @@ common_fun = function (data){
             mean_depth = mean(depth))
   return(common_indices)
 }
+
 ```
+
