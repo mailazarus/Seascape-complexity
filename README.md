@@ -2,8 +2,8 @@ This repository includes codes to calculate indices of seascape complexity from 
 
 The necessary data for the calculation of all indices should include 3 variables:
 
-  * Depth values along the bottom profile
-  * Their order, i.e. an acending sequence of numbers corresponding to the measurements
+  * Depth values along a bottom profile
+  * Their order, i.e. an ascending sequence of numbers corresponding to the measurements
   * An identification variable distinct for each bottom profile
 
 An example data is provided - 'simulation data'. 
@@ -31,4 +31,7 @@ distinctiveness, irregularity, and singularity.
 If you wish calculate all suggested complexity indices, you can import your own data and the output would include 21 complexity indices 
 (and the mean depth value within the sampling unit). 
 If you wish to only calculate specific indices, such as srtuctural diversity indices, you may use the "structural diversity functions" code. 
+
+For more information see our publication "A review of seascape complexity indices and their performance in coral and rocky reefs", or conatact me at mai.lazarus@gmail.com. 
+
 
